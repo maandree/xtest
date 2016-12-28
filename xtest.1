@@ -1,0 +1,112 @@
+.Dd 2016-12-28
+.Dt XTEST 1
+.Os xtest
+.Sh NAME
+.Nm xtest
+.Nd test file types and permissions of multiple files
+.Sh SYNOPSIS
+.Nm
+.Oo Fl 0bcdefghkLprSstuwx Oc
+.Oo \fB+bcdefghkLprSstuwx\fP Oc
+.Oo Ar file ... Oc
+.Sh DESCRIPTION
+.Nm
+tests the file types and permissions of each specified
+file, if not file has been specified, a list file is read
+from stdin.
+.Pp
+All files that pass at least on of the tests are printed to
+stdout.
+.Sh OPTIONS
+.Bl -tag -width Ds
+.It Fl 0
+Use NUL byte instead of <newline> to delimit files in
+both the input and the output.
+.It Fl f | Fl d | Fl p | Fl hL | Fl S | Fl b | Fl c
+File exists and is a (regular file
+.Op Fl f
+| directory
+.Op Fl d
+| named pipe
+.Op Fl p
+| symbolic link
+.Op Fl h | Fl L
+| socket
+.Op Fl S
+| block special
+.Op Fl b
+| character special
+.Op Fl c ) .
+.It Fl k | Fl g | Fl u | Fl r | Fl w | Fl x
+File exists and has
+.Xr ( sticky 1
+.Op Fl k
+|
+.Xr setgid 2
+.Op Fl g
+|
+.Xr setuid 4
+.Op Fl u
+|
+.Xr read 4
+.Op Fl r
+|
+.Xr write 2
+.Op Fl w
+|
+.Xr execute 1
+.Op Fl x )
+permissions.
+.It Fl t
+Input is an file descriptor and is associated with a terminal.
+.It \fB+f\fP | \fB+d\fP | \fB+p\fP | \fB+hL\fP | \fB+S\fP | \fB+b\fP | \fB+c\fP
+File does not exist or is not a (regular file
+.Op \fB+f\fP
+| directory
+.Op \fB+d\fP
+| named pipe
+.Op \fB+p\fP
+| symbolic link
+.Op \fB+h\fP | \fB+L\fP
+| socket
+.Op \fB+S\fP
+| block special
+.Op \fB+b\fP
+| character special
+.Op \fB+c\fP ) .
+.It \fB+k\fP | \fB+g\fP | \fB+u\fP | \fB+r\fP | \fB+w\fP | \fB+x\fP
+File does not exist or does not has
+.Xr ( sticky 1
+.Op \fB+k\fP
+|
+.Xr setgid 2
+.Op \fB+g\fP
+|
+.Xr setuid 4
+.Op \fB+u\fP
+|
+.Xr read 4
+.Op \fB+r\fP
+|
+.Xr write 2
+.Op \fB+w\fP
+|
+.Xr execute 1
+.Op \fB+x\fP )
+permissions.
+.It \fB+t\fP
+Input is not a file descriptor or is not associated with a terminal.
+.El
+.Sh RATIONALE
+\fB+\fP-flags are included because it is too cumbersome to use
+.Xr comm 1 .
+.Pp
+Only one test need to pass because this allows the user to
+represent the required condition in conjunctive normal form
+by pipe together multiple instances of
+.Nm xtest
+for conjunction. Disjunctive normal form is not as simple.
+.Sh SEE ALSO
+.Xr test 1 ,
+.Xr find 1 ,
+.Xr xargs 1
