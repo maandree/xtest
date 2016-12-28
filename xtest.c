@@ -142,13 +142,13 @@ main(int argc, char *argv[])
 			test(line);
 		}
 		if (ferror(stdin)) {
-			fprintf(stderr, "%s: <stdin>: %s\n", strerror(errno));
+			fprintf(stderr, "%s: <stdin>: %s\n", argv0, strerror(errno));
 			return 1;
 		}
 	}
 
 	if (ferror(stdout)) {
-		fprintf(stderr, "%s: <stdout>: %s\n", strerror(errno));
+		fprintf(stderr, "%s: <stdout>: %s\n", argv0, strerror(errno));
 		return 1;
 	}
 	return 0;
