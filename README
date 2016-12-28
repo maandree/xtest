@@ -1,0 +1,59 @@
+NAME
+	xtest - test file types and permissions of multiple files
+
+SYNOPSIS
+	xtest [-0bcdefghkLprSstuwx] [+bcdefghkLprSstuwx] [file ...]
+
+DESCRIPTION
+	xtest tests the file types and permissions of each specified
+	file, if not file has been specified, a list file is read
+	from stdin.
+
+	All files that pass at least on of the tests are printed to
+	stdout.
+
+OPTIONS
+	-0	Use NUL byte instead of <newline> to delimit files in
+		both the input and the output.
+
+	-f | -d | -p | -hL | -S | -b | -c
+		File exists and is a (regular file [-f] | directory
+		[-d] | named pipe [-p] | symbolic link [-h | -L] |
+		socket [-S] | block special [-b] | character special
+		[-c]).
+
+	-k | -g | -u | -r | -w | -x
+		File exists and has (sticky(1) [-k] | setgid(2) [-g] |
+		setuid(4) [-u] | read(4) [-r] | write(2) [-w] |
+		execute(1) [-x]) permissions.
+
+	-t
+		Input is an file descriptor and is associated with a
+		terminal.
+
+	+f | +d | +p | +hL | +S | +b | +c
+		File does not exist or is not a (regular file [+f] |
+		directory [+d] | named pipe [+p] | symbolic link [+h |
+		+L] | socket [+S] | block special [+b] | character
+		special [+c]).
+
+	+k | +g | +u | +r | +w | +x
+		File does not exist or does not has (sticky(1) [+k] |
+		setgid(2) [+g] | setuid(4) [+u] | read(4) [+r] |
+		write(2) [+w] | execute(1) [+x]) permissions.
+
+	+t
+		Input is not a file descriptor or is not associated
+		with a terminal.
+
+RATIONALE
+	+-flags are included because it is too cumbersome to use
+	comm(1).
+
+	Only one test need to pass because this allows the user to
+	represent the required condition in conjunctive normal form
+	by pipe together multiple instances of xtest for conjunction.
+	Disjunctive normal form is not as simple.
+
+SEE ALSO
+	test(1), find(1), xargs(1)
