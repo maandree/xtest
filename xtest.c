@@ -75,7 +75,7 @@ static int (*testmap[])(char *) = {
 static void
 usage(void)
 {
-	fprintf(stderr, "usage: %s [-0bcdefghkLprSstuwx] [+bcdefghkLprSstuwx] file ...\n", argv0);
+	fprintf(stderr, "usage: %s [-0bcdefghkLprSstuwx] [+bcdefghkLprSstuwx] [file ...]\n", argv0);
 	exit(1);
 }
 
