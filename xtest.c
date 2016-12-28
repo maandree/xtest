@@ -13,7 +13,8 @@
 
 char *argv0;
 static char delim = '\n';
-static long int tests = 0;
+static long int pos_tests = 0;
+static long int neg_tests = 0;
 
 static int test_b(char *s) { struct stat buf; if ( stat(s, &buf)) return 0; return S_ISBLK  (buf.st_mode); }
 static int test_c(char *s) { struct stat buf; if ( stat(s, &buf)) return 0; return S_ISCHR  (buf.st_mode); }
@@ -44,29 +45,37 @@ test_t(char *s)
 	return isatty((int)fd);
 }
 
+#define LIST_TESTS\
+	X('b', test_b, 0)\
+	X('c', test_c, 1)\
+	X('d', test_d, 2)\
+	X('e', test_e, 3)\
+	X('f', test_f, 4)\
+	X('g', test_g, 5)\
+	X('h', test_h, 6)\
+	X('k', test_k, 7)\
+	X('p', test_p, 8)\
+	X('r', test_r, 9)\
+	X('S', test_S, 10)\
+	X('s', test_s, 11)\
+	X('t', test_t, 12)\
+	X('u', test_u, 13)\
+	X('w', test_w, 14)\
+	X('x', test_x, 15)
+
+#define LIST_SYNONYMS\
+	X('L', test_h, 6)
+
 static int (*testmap[])(char *) = {
-	test_b,
-	test_c,
-	test_d,
-	test_e,
-	test_f,
-	test_g,
-	test_h,
-	test_k,
-	test_p,
-	test_r,
-	test_S,
-	test_s,
-	test_t,
-	test_u,
-	test_w,
-	test_x
+#define X(FLAG, FUNC, NUM) FUNC,
+	LIST_TESTS
+#undef X
 };
 
 static void
 usage(void)
 {
-	fprintf(stderr, "usage: %s [-0bcdefghkLprSstuwx] file ...\n", argv0);
+	fprintf(stderr, "usage: %s [-0bcdefghkLprSstuwx] [+bcdefghkLprSstuwx] file ...\n", argv0);
 	exit(1);
 }
 
@@ -74,8 +83,15 @@ static void
 test(char *s)
 {
 	long int i, j;
-	for (i = 0; j = 1L << i, j <= tests; i++) {
-		if ((tests & j) && testmap[i](s)) {
+	for (i = 0; j = 1L << i, j <= pos_tests; i++) {
+		if ((pos_tests & j) && testmap[i](s)) {
+			printf("%s%c", s, delim);
+			fflush(stdout);
+			break;
+		}
+	}
+	for (i = 0; j = 1L << i, j <= neg_tests; i++) {
+		if ((neg_tests & j) && !testmap[i](s)) {
 			printf("%s%c", s, delim);
 			fflush(stdout);
 			break;
@@ -94,28 +110,24 @@ main(int argc, char *argv[])
 	case '0':
 		delim = '\0';
 		break;
-	case 'b': tests |= 1 << 0; break;
-	case 'c': tests |= 1 << 1; break;
-	case 'd': tests |= 1 << 2; break;
-	case 'e': tests |= 1 << 3; break;
-	case 'f': tests |= 1 << 4; break;
-	case 'g': tests |= 1 << 5; break;
-	case 'h': tests |= 1 << 6; break;
-	case 'k': tests |= 1 << 7; break;
-	case 'L': tests |= 1 << 6; break;
-	case 'p': tests |= 1 << 8; break;
-	case 'r': tests |= 1 << 9; break;
-	case 'S': tests |= 1 << 10; break;
-	case 's': tests |= 1 << 11; break;
-	case 't': tests |= 1 << 12; break;
-	case 'u': tests |= 1 << 13; break;
-	case 'w': tests |= 1 << 14; break;
-	case 'x': tests |= 1 << 15; break;
+#define X(FLAG, FUNC, NUM)\
+	case FLAG: pos_tests |= 1 << NUM; break;
+	LIST_TESTS
+	LIST_SYNONYMS
+#undef X
+	default:
+		usage();
+	} ARGALT('+') {
+#define X(FLAG, FUNC, NUM)\
+	case FLAG: neg_tests |= 1 << NUM; break;
+	LIST_TESTS
+	LIST_SYNONYMS
+#undef X
 	default:
 		usage();
 	} ARGEND;
 
-	if (!tests) {
+	if (!pos_tests && !neg_tests) {
 		fprintf(stderr, "%s: at least one test is required\n", argv0);
 		return 1;
 	}
