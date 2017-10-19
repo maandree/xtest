@@ -1,56 +1,34 @@
-PREFIX = /usr
-BINDIR = $(PREFIX)/bin
-DATADIR = $(PREFIX)/share
-MANDIR = $(DATADIR)/man
-MAN1DIR = $(MANDIR)/man1
-LICENSEDIR = $(DATADIR)/licenses
+.POSIX:
 
-PKGNAME = xtest
-COMMAND = xtest
-
-CPPFLAGS = -D_DEFAULT_SOURCE -D_BSD_SOURCE
-CFLAGS   = -std=c99 -Wall -pedantic
+CONFIGFILE = config.mk
+include $(CONFIGFILE)
 
 all: xtest
 
-xtest: xtest.o
-
 .o:
-	$(CC) $(LDFLAGS) -o $@ $<
+	$(CC) -o $@ $^ $(LDFLAGS)
 
 .c.o:
-	$(CC) $(CFLAGS) $(CPPFLAGS) -o $@ -c $<
+	$(CC) -c -o $@ $< $(CFLAGS) $(CPPFLAGS)
 
-install: install-base install-doc
+xtest.o: arg.h
 
-install-base: install-cmd install-copyright
-
-install-cmd: xtest
-	mkdir -p -- "$(DESTDIR)$(BINDIR)"
-	cp -f -- xtest "$(DESTDIR)$(BINDIR)/$(COMMAND)"
-	chmod 755 -- "$(DESTDIR)$(BINDIR)/$(COMMAND)"
-
-install-copyright: install-license
-
-install-license:
-	mkdir -p -- "$(DESTDIR)$(LICENSEDIR)/$(PKGNAME)"
-	cp -f -- LICENSE "$(DESTDIR)$(LICENSEDIR)/$(PKGNAME)/LICENSE"
-	chmod 644 -- "$(DESTDIR)$(LICENSEDIR)/$(PKGNAME)/LICENSE"
-
-install-doc: install-man
-
-install-man: install-man1
-
-install-man1:
-	mkdir -p -- "$(DESTDIR)$(MAN1DIR)"
-	cp -f -- xtest.1 "$(DESTDIR)$(MAN1DIR)/$(COMMAND).1"
-	chmod 644 -- "$(DESTDIR)$(MAN1DIR)/$(COMMAND).1"
+install: xtest
+	mkdir -p -- "$(DESTDIR)$(PREFIX)/bin"
+	mkdir -p -- "$(DESTDIR)$(MANPREFIX)/man1"
+	mkdir -p -- "$(DESTDIR)$(PREFIX)/share/licenses/xtest"
+	cp -- xtest "$(DESTDIR)$(PREFIX)/bin/"
+	cp -- xtest.1 "$(DESTDIR)$(MANPREFIX)/man1/"
+	cp -- LICENSE "$(DESTDIR)$(PREFIX)/share/licenses/xtest/"
 
 uninstall:
-	rm -- "$(DESTDIR)$(MAN1DIR)/$(COMMAND).1"
-	rm -- "$(DESTDIR)$(LICENSEDIR)/$(PKGNAME)/LICENSE"
-	rm -- "$(DESTDIR)$(BINDIR)/$(COMMAND)"
-	rmdir -- "$(DESTDIR)$(LICENSEDIR)/$(PKGNAME)"
+	-rm -f -- "$(DESTDIR)$(PREFIX)/bin/xtest"
+	-rm -f -- "$(DESTDIR)$(MANPREFIX)/man1/xtest.1"
+	-rm -rf -- "$(DESTDIR)$(PREFIX)/share/licenses/xtest"
 
-.PHONY: all install install-base install-cmd install-copyright install-license \
-        install-doc install-man install-man1 uninstall
+clean:
+	-rm -f -- xtest *.o
+
+.SUFFIXES: .o .c.o
+
+.PHONY: all install uninstall clean

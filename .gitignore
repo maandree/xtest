@@ -1,9 +1,6 @@
-\#*\#
-.\#*
 *~
-*.bak
-*.swo
-*.swp
-*.orig
+*\#*
 *.o
-xtest
+*.su
+*.out
+/xtest
