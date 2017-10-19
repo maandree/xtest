@@ -22,7 +22,9 @@ stdout.
 .It Fl 0
 Use NUL byte instead of <newline> to delimit files in
 both the input and the output.
-.It Fl f | Fl d | Fl p | Fl hL | Fl S | Fl b | Fl c
+.It Fl e
+File exists.
+.It Fl f | Fl d | Fl p | Fl hL | Fl S | Fl s | Fl b | Fl c
 File exists and is a (regular file
 .Op Fl f
 | directory
@@ -33,6 +35,8 @@ File exists and is a (regular file
 .Op Fl h | Fl L
 | socket
 .Op Fl S
+| non-empty file
+.Op Fl s
 | block special
 .Op Fl b
 | character special
@@ -59,7 +63,9 @@ File exists and has
 permissions.
 .It Fl t
 Input is an file descriptor and is associated with a terminal.
-.It \fB+f\fP | \fB+d\fP | \fB+p\fP | \fB+hL\fP | \fB+S\fP | \fB+b\fP | \fB+c\fP
+.It \fB+e\fP
+File does not exist
+.It \fB+f\fP | \fB+d\fP | \fB+p\fP | \fB+hL\fP | \fB+S\fP | \fB+s\fP | \fB+b\fP | \fB+c\fP
 File does not exist or is not a (regular file
 .Op \fB+f\fP
 | directory
@@ -70,6 +76,8 @@ File does not exist or is not a (regular file
 .Op \fB+h\fP | \fB+L\fP
 | socket
 .Op \fB+S\fP
+| non-empty file
+.Op \fB+s\fP
 | block special
 .Op \fB+b\fP
 | character special
