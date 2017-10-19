@@ -40,7 +40,7 @@ simple_test d /dev
 simple_test f /dev
 
 mkdir -p .testdir
-touch .testdir/r .testdir/w .testdir/x .testdir/k .testdir/u .testdir/g
+touch .testdir/r .testdir/w .testdir/x .testdir/k .testdir/u .testdir/g .testdir/rw
 printf x > .testdir/s
 chmod 100 .testdir/x
 chmod 200 .testdir/w
@@ -48,6 +48,7 @@ chmod 400 .testdir/r
 chmod 1000 .testdir/k
 chmod 2000 .testdir/g
 chmod 4000 .testdir/u
+chmod 600 .testdir/rw
 ln -s 'non existent file' .testdir/h
 mkfifo .testdir/p
 ./mksocket .testdir/S
@@ -77,5 +78,28 @@ for f in 0 1 2 3 4 5 6 x y z; do
 	test -t $f
     fi
 done
+
+! test -e 'non existent file'
+test $(./xtest -e 'non existent file' | wc -l) = 0
+test $(./xtest +e 'non existent file' | wc -l) = 1
+
+rm -rf .testdir
+mkdir -p .testdir
+for i in 0 1 2 3 4 5 6 7; do
+    touch .testdir/$i
+    chmod ${i}00 .testdir/$i
+done
+
+test $(./xtest -r .testdir/* | wc -l) = 4
+test $(./xtest +r .testdir/* | wc -l) = 4
+test $(./xtest -w .testdir/* | wc -l) = 4
+test $(./xtest +w .testdir/* | wc -l) = 4
+test $(./xtest -x .testdir/* | wc -l) = 4
+test $(./xtest +x .testdir/* | wc -l) = 4
+test $(./xtest -r +r .testdir/* | wc -l) = 8
+test $(./xtest -w +w .testdir/* | wc -l) = 8
+test $(./xtest -x +x .testdir/* | wc -l) = 8
+test $(./xtest -rw .testdir/* | wc -l) = 6
+test $(./xtest -r .testdir/* | ./xtest -w | wc -l) = 2
 
 rm -rf .testdir
