@@ -37,7 +37,6 @@ simple_test() {
 simple_test b /dev
 simple_test c /dev
 simple_test d /dev
-simple_test f /dev
 
 mkdir -p .testdir
 touch .testdir/r .testdir/w .testdir/x .testdir/k .testdir/u .testdir/g .testdir/rw
@@ -52,6 +51,9 @@ chmod 600 .testdir/rw
 ln -s 'non existent file' .testdir/h
 mkfifo .testdir/p
 ./mksocket .testdir/S
+mkdir -p .testdir/d
+simple_test f .testdir
+simple_test d .testdir
 simple_test e .testdir
 simple_test r .testdir
 simple_test w .testdir
@@ -72,7 +74,7 @@ find .testdir -print0 | ./xtest -0x | tr '\0' '\n' > .testdir/tr
 diff .testdir/tr .testdir/lf >/dev/null
 
 for f in 0 1 2 3 4 5 6 x y z; do
-    if test $(xtest -t $f | wc -l) = 0; then
+    if test $(./xtest -t $f | wc -l) = 0; then
 	! test -t $f
     else
 	test -t $f
