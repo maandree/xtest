@@ -1,0 +1,81 @@
+#!/bin/sh
+
+rm -rf .testdir
+
+set -v
+set -e
+
+! ./xtest 2>/dev/null
+! ./xtest . 2>/dev/null
+
+simple_test() {
+    test $(printf '%s\n' "$2"/* | ./xtest -$1 | wc -l) -gt 0
+    printf '%s\n' "$2"/* | ./xtest -$1 | while read f; do
+	test -$1 "$f"
+    done
+
+    test $(printf '%s\n' "$2"/* | ./xtest +$1 | wc -l) -gt 0
+    printf '%s\n' "$2"/* | ./xtest +$1 | while read f; do
+	! test -$1 "$f"
+    done
+
+    test $(./xtest -$1 "$2"/* | wc -l) -gt 0
+    ./xtest -$1 "$2"/* | while read f; do
+	if ! test "$f" = /dev/stdin; then
+	    test -$1 "$f"
+	fi
+    done
+
+    test $(./xtest +$1 "$2"/* | wc -l) -gt 0
+    ./xtest +$1 "$2"/* | while read f; do
+	if ! test "$f" = /dev/stdout; then
+	    ! test -$1 "$f"
+	fi
+    done
+}
+
+simple_test b /dev
+simple_test c /dev
+simple_test d /dev
+simple_test f /dev
+
+mkdir -p .testdir
+touch .testdir/r .testdir/w .testdir/x .testdir/k .testdir/u .testdir/g
+printf x > .testdir/s
+chmod 100 .testdir/x
+chmod 200 .testdir/w
+chmod 400 .testdir/r
+chmod 1000 .testdir/k
+chmod 2000 .testdir/g
+chmod 4000 .testdir/u
+ln -s 'non existent file' .testdir/h
+mkfifo .testdir/p
+./mksocket .testdir/S
+simple_test e .testdir
+simple_test r .testdir
+simple_test w .testdir
+simple_test x .testdir
+simple_test s .testdir
+simple_test h .testdir
+simple_test L .testdir
+simple_test p .testdir
+simple_test k .testdir
+simple_test u .testdir
+simple_test g .testdir
+simple_test S .testdir
+
+find .testdir -print0 | ./xtest -0x > .testdir/nul
+find .testdir | ./xtest -x > .testdir/lf
+find .testdir -print0 | ./xtest -0x | tr '\0' '\n' > .testdir/tr
+! diff .testdir/nul .testdir/lf >/dev/null
+diff .testdir/tr .testdir/lf >/dev/null
+
+for f in 0 1 2 3 4 5 6 x y z; do
+    if test $(xtest -t $f | wc -l) = 0; then
+	! test -t $f
+    else
+	test -t $f
+    fi
+done
+
+rm -rf .testdir

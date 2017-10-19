@@ -3,7 +3,7 @@
 CONFIGFILE = config.mk
 include $(CONFIGFILE)
 
-all: xtest
+all: xtest mksocket
 
 .o:
 	$(CC) -o $@ $^ $(LDFLAGS)
@@ -12,6 +12,9 @@ all: xtest
 	$(CC) -c -o $@ $< $(CFLAGS) $(CPPFLAGS)
 
 xtest.o: arg.h
+
+check: xtest mksocket
+	./test
 
 install: xtest
 	mkdir -p -- "$(DESTDIR)$(PREFIX)/bin"
@@ -27,7 +30,7 @@ uninstall:
 	-rm -rf -- "$(DESTDIR)$(PREFIX)/share/licenses/xtest"
 
 clean:
-	-rm -f -- xtest *.o
+	-rm -rf -- xtest mksocket *.o .testdir
 
 .SUFFIXES: .o .c.o
 

@@ -4,3 +4,5 @@
 *.su
 *.out
 /xtest
+/mksocket
+/.testdir
