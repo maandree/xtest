@@ -5,8 +5,11 @@ include $(CONFIGFILE)
 
 all: xtest mksocket
 
-.o:
-	$(CC) -o $@ $^ $(LDFLAGS)
+xtest: xtest.o
+	$(CC) -o $@ xtest.o $(LDFLAGS)
+
+mksocket: mksocket.o
+	$(CC) -o $@ mksocket.o $(LDFLAGS)
 
 .c.o:
 	$(CC) -c -o $@ $< $(CFLAGS) $(CPPFLAGS)
@@ -32,6 +35,7 @@ uninstall:
 clean:
 	-rm -rf -- xtest mksocket *.o .testdir
 
-.SUFFIXES: .o .c.o
+.SUFFIXES:
+.SUFFIXES: .o .c
 
 .PHONY: all install uninstall clean
