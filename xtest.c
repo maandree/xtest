@@ -86,14 +86,14 @@ test(char *s)
 		if ((pos_tests & j) && testmap[i](s)) {
 			printf("%s%c", s, delim);
 			fflush(stdout);
-			break;
+			return;
 		}
 	}
 	for (i = 0; j = 1L << i, j <= neg_tests; i++) {
 		if ((neg_tests & j) && !testmap[i](s)) {
 			printf("%s%c", s, delim);
 			fflush(stdout);
-			break;
+			return;
 		}
 	}
 }
