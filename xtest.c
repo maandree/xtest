@@ -24,7 +24,7 @@ static int test_h(char *s) { struct stat buf; if (lstat(s, &buf)) return 0; retu
 static int test_k(char *s) { struct stat buf; if ( stat(s, &buf)) return 0; return S_ISVTX & buf.st_mode ; }
 static int test_p(char *s) { struct stat buf; if ( stat(s, &buf)) return 0; return S_ISFIFO (buf.st_mode); }
 static int test_S(char *s) { struct stat buf; if ( stat(s, &buf)) return 0; return S_ISSOCK (buf.st_mode); }
-static int test_s(char *s) { struct stat buf; if ( stat(s, &buf)) return 0; return           buf.st_size ; }
+static int test_s(char *s) { struct stat buf; if ( stat(s, &buf)) return 0; return         !!buf.st_size ; }
 static int test_u(char *s) { struct stat buf; if ( stat(s, &buf)) return 0; return S_ISUID & buf.st_mode ; }
 
 static int test_e(char *s) { return !faccessat(AT_FDCWD, s, F_OK, AT_EACCESS); }

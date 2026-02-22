@@ -38,4 +38,4 @@ clean:
 .SUFFIXES:
 .SUFFIXES: .o .c
 
-.PHONY: all install uninstall clean
+.PHONY: all check install uninstall clean

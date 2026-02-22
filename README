@@ -6,10 +6,10 @@ SYNOPSIS
 
 DESCRIPTION
 	xtest tests the file types and permissions of each specified
-	file, if not file has been specified, a list file is read
+	file; if no file has been specified, a list file is read
 	from stdin.
 
-	Each file that pass at least one of the tests is printed to
+	Each file that passes at least one of the tests is printed to
 	stdout.
 
 OPTIONS
@@ -29,7 +29,7 @@ OPTIONS
 		setuid(4) [-u] | read(4) [-r] | write(2) [-w] |
 		execute(1) [-x]) permissions.
 
-	-t	Input is an file descriptor and is associated with a
+	-t	Input is a file descriptor and is associated with a
 		terminal.
 
 	+e	File does not exist.
@@ -41,7 +41,7 @@ OPTIONS
 		[+b] | character special [+c]).
 
 	+k | +g | +u | +r | +w | +x
-		File does not exist or does not has (sticky(1) [+k] |
+		File does not exist or does not have (sticky(1) [+k] |
 		setgid(2) [+g] | setuid(4) [+u] | read(4) [+r] |
 		write(2) [+w] | execute(1) [+x]) permissions.
 
@@ -52,9 +52,9 @@ RATIONALE
 	+-flags are included because it is too cumbersome to use
 	comm(1).
 
-	Only one test need to pass because this allows the user to
+	Only one test needs to pass because this allows the user to
 	represent the required condition in conjunctive normal form
-	by pipe together multiple instances of xtest for conjunction.
+	by piping together multiple instances of xtest for conjunction.
 	Disjunctive normal form is not as simple.
 
 SEE ALSO
